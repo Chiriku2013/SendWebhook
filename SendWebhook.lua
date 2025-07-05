@@ -43,7 +43,7 @@ local function sendUsage()
     totalUsers += 1
 
     local info = {
-        title = "📢 **Script Main-Hub-Tổng Hợp Của Chiriku Roblox ĐZ Real Đã Được Sử Dụng**",
+        title = "📢 **Script Main-Hub-Kaitun-Tổng Hợp Của Chiriku Roblox ĐZ Real Đã Được Sử Dụng**",
         description = table.concat({
             "👤 Tên người dùng: **" .. player.Name .. "**",
             "🔧 Client Hack: **" .. detectExecutor() .. "**",
