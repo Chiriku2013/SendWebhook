@@ -22,20 +22,25 @@ local function detectDevice()
     return UserInputService.TouchEnabled and "Mobile" or "PC"
 end
 
--- Local time string
+-- Local time string (đã sửa ổn định)
 local function getLocalTimeString()
-    local date = os.date("*t")
-    local hour = date.hour % 24
-    local ampm = hour < 12 and "AM" or "PM"
-    local formattedTime = string.format("%02i:%02i:%02i %s", ((hour - 1) % 12) + 1, date.min, date.sec, ampm)
-    local formattedDate = string.format("%02d/%02d/%Y", date.day, date.month, date.year)
+    local success, result = pcall(function()
+        local date = os.date("*t")
+        local hour = date.hour
+        local ampm = hour < 12 and "AM" or "PM"
+        local formattedHour = ((hour - 1) % 12) + 1
+        local formattedTime = string.format("%02i:%02i:%02i %s", formattedHour, date.min, date.sec, ampm)
+        local formattedDate = string.format("%02d/%02d/%04d", date.day, date.month, date.year)
 
-    local regionCode = "Unknown"
-    pcall(function()
-        regionCode = LocalizationService:GetCountryRegionForPlayerAsync(player)
+        local regionCode = "Unknown"
+        pcall(function()
+            regionCode = LocalizationService:GetCountryRegionForPlayerAsync(player)
+        end)
+
+        return formattedDate .. " - " .. formattedTime .. " [ " .. regionCode .. " ]"
     end)
 
-    return formattedDate .. " - " .. formattedTime .. " [ " .. regionCode .. " ]"
+    return success and result or "Unknown Time"
 end
 
 -- Avatar thumbnail
@@ -58,11 +63,9 @@ local function getFPSAndPing()
     return "📶 FPS: **" .. fps .. "** | 📡 Ping: **" .. ping .. "**ms"
 end
 
--- Discord UTC Timestamp
+-- Discord UTC Timestamp (đã sửa chuẩn theo mẫu cũ)
 local function getDiscordTimestamp()
-    local now = os.time()
-    local utc = os.date("!*t", now)
-    return string.format("%04d-%02d-%02dT%02d:%02d:%02dZ", utc.year, utc.month, utc.day, utc.hour, utc.min, utc.sec)
+    return os.date("!%Y-%m-%dT%H:%M:%SZ")
 end
 
 -- Send Webhook
@@ -80,11 +83,11 @@ local function sendUsage()
     local thumbUrl = getAvatarThumbnail()
 
     local embedFields = {
-        { name = "👤 Username: **" .. player.Name .. "**", value = "\u200b", inline = false },
-        { name = deviceIcon .. " Device: **" .. device .. "**", value = "\u200b", inline = false },
-        { name = "🔧 Executor: **" .. detectExecutor() .. "**", value = "\u200b", inline = false },
-        { name = "🕒 Local Time: **" .. getLocalTimeString() .. "**", value = "\u200b", inline = false },
-        { name = "📌 Place ID: **" .. placeId .. "** (" .. gameName .. ")", value = "\u200b", inline = false },
+        { name = "👤 Username: **" .. player.Name .. "**", value = " ", inline = false },
+        { name = deviceIcon .. " Device: **" .. device .. "**", value = " ", inline = false },
+        { name = "🔧 Executor: **" .. detectExecutor() .. "**", value = " ", inline = false },
+        { name = "🕒 Local Time: **" .. getLocalTimeString() .. "**", value = " ", inline = false },
+        { name = "📌 Place ID: **" .. placeId .. "** (" .. gameName .. ")", value = " ", inline = false },
         { name = "📥 Script Hop (Mobile Copy)", value = rejoinScript, inline = false },
         { name = "📥 Script Hop (PC Copy)", value = "```\n" .. rejoinScript .. "\n```", inline = false },
         { name = " ", value = getFPSAndPing(), inline = false }
@@ -96,9 +99,7 @@ local function sendUsage()
         fields = embedFields,
         color = 0x000000,
         thumbnail = { url = thumbUrl },
-        image = {
-            url = "https://cdn.discordapp.com/attachments/1390808706647588985/1392240374633857104/ChirikuRoblox.gif"
-        },
+        image = { url = "https://cdn.discordapp.com/attachments/1390808706647588985/1392240374633857104/ChirikuRoblox.gif" },
         footer = { text = "By: Chiriku Roblox ĐZ Real" },
         timestamp = getDiscordTimestamp()
     }
